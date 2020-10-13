@@ -1,0 +1,691 @@
+#Adidas Jahresabschluß
+import random as random
+import pandas as pd
+import numpy as np
+import xlrd
+from tkinter import*
+import matplotlib.pyplot as plt
+from tkinter import font
+from PIL import ImageTk, Image
+
+#Import der Werte aus der Excel Liste
+lars = pd.read_excel("adidas.xlsx")
+def larsi(filename):
+    global kurzf_aktiva2020,langf_aktiva2020,kurzf_aktiva_namen,langf_aktiva_namen
+    global kurzf_passiva2020,langf_passiva2020,kurzf_passiva_namen,langf_passiva_namen,ek2020,ek_namen
+    global kurzf_aktiva2019,langf_aktiva2019,kurzf_passiva2019,langf_passiva2019,ek2019
+    book = xlrd.open_workbook(filename, encoding_override = "utf-8")
+    sheet = book.sheet_by_index(0)
+    #Export kurzfristige Akitva
+    kurzf_aktiva2020 = np.asarray([sheet.cell(i,1).value for i in range(4,10)])
+    kurzf_aktiva_namen = np.asarray([sheet.cell(i,0).value for i in range(4,10)])
+    kurzf_aktiva2019 = np.asarray([sheet.cell(i,3).value for i in range(4,10)])
+
+    #Export langfristige Aktiva
+    langf_aktiva2020 = np.asarray([sheet.cell(i,1).value for i in range(12,20)])
+    langf_aktiva_namen = np.asarray([sheet.cell(i,0).value for i in range(12,20)])
+    langf_aktiva2019 = np.asarray([sheet.cell(i,3).value for i in range(12,20)])
+
+    #Export kurzfrisige Passiva
+    kurzf_passiva2020 = np.asarray([sheet.cell(i,1).value for i in range(25,32)])
+    kurzf_passiva_namen = np.asarray([sheet.cell(i,0).value for i in range(25,32)])
+    kurzf_passiva2019 = np.asarray([sheet.cell(i,3).value for i in range(25,32)])
+
+    #Export langfristige Passiva
+    langf_passiva2020 = np.asarray([sheet.cell(i,1).value for i in range(34,41)])
+    langf_passiva_namen = np.asarray([sheet.cell(i,0).value for i in range(34,41)])
+    langf_passiva2019 = np.asarray([sheet.cell(i,3).value for i in range(34,41)])
+
+    #Export Eigenkapital
+    ek2020 = np.asarray([sheet.cell(i,1).value for i in range(44,48)])
+    ek_namen = np.asarray([sheet.cell(i,0).value for i in range(44,48)])
+    ek2019 = np.asarray([sheet.cell(i,3).value for i in range(44,48)])
+
+larsi('adidas.xlsx')
+l1 = [] #Kurzfristige Aktiva 2020
+l11 = [] #Kurzfristige Aktiva 2019
+l2 = [] #Kurzfristige Aktiva Namen
+l3 = [] #Langfristige Aktiva 2020
+l13 = [] #Langfristige Aktiva 2019
+l4 = [] #Langfristige Aktiva Namen
+l5 = [] #Kurzfristige Passiva 2020
+l15 =[] #Kurzfristige Passiva 2019
+l6 = [] #Kurzfristige Passiva Namen
+l7 = [] #Langfristige Passiva 2020
+l17 = [] #Langfristige Passiva 2019
+l8 = [] #Langfristige Passiva Namen
+l9 = [] #Eigenkapital 2020
+l19 = [] #Eigenkapital 2019
+l10 = [] #Eigenkapital Namen
+#Definition ?
+
+def umwandlung_int():
+#Umwandeln des Textes in Zahl(int) für Kurzfristige Aktiva
+    a = 0
+    for i in range(len(kurzf_aktiva2020)):
+        l1.append(int(kurzf_aktiva2020[a]))
+        l11.append(int(kurzf_aktiva2019[a]))
+        l2.append(kurzf_aktiva_namen[a])
+        a +=1
+    #Umwandeln des Textes in Zahl(int) für Langfristige Aktiva
+    b = 0
+    for i in range(len(langf_aktiva2020)):
+        l3.append(int(langf_aktiva2020[b]))
+        l13.append(int(langf_aktiva2019[b]))
+        l4.append(langf_aktiva_namen[b])
+        b +=1
+    #Umwandeln des Textes in Zahl(int) für kurzfristige Passiva
+    c = 0
+    for i in range(len(kurzf_passiva2020)):
+        l5.append(int(kurzf_passiva2020[c]))
+        l15.append(int(kurzf_passiva2019[c]))
+        l6.append(kurzf_passiva_namen[c])
+        c +=1
+    #Umwandeln des Textes in Zahl(int) für langfristige Passiva
+    d = 0
+    for i in range(len(langf_passiva2020)):
+        l7.append(int(langf_passiva2020[d]))
+        l17.append(int(langf_passiva2019[d]))
+        l8.append(langf_passiva_namen[d])
+        d +=1
+    #Umwandeln des Textes in Zahl(int) für Eigenkapital
+    e = 0
+    for i in range(len(ek2020)):
+        l9.append(int(ek2020[e]))
+        l10.append(ek_namen[e])
+        l19.append(int(ek2019[e]))
+        e +=1
+umwandlung_int()
+
+#Klasse für Werte aus Excel-Liste(Name+Werte)/Später evtl. noch andere Werte(2019/2018)
+class Aktiva:
+    def __init__(self,name,wert2020,wert2019):
+        self.Name = name
+        self.Wert2020 = wert2020
+        self.Wert2019 = wert2019
+class Passiva:
+    def __init__(self,name,wert2020,wert2019):
+        self.Name = name
+        self.Wert2020 = wert2020
+        self.Wert2019 = wert2019
+#Kurzfristige Aktiva
+flüssige_mittel = Aktiva(l2[0],l1[0],l11[0])
+kurzf_finanzanlagen = Aktiva(l2[1],l1[1],l11[1])
+ford_aus_l_u_l= Aktiva(l2[2],l1[2],l11[2])
+sonstige_kurzf_verm = Aktiva(l2[3],l1[3],l11[3])
+voraete = Aktiva(l2[4],l1[4],l11[4])
+ford_aus_ertragssteuer =Aktiva(l2[5],l1[5],l11[5])
+umlaufvermögen2020 = sum(l1)
+umlaufvermögen2019 = sum(l11)
+#Summe Kurzfristige Aktiva
+print("Summe Umlaufvermögen 2020 :",umlaufvermögen2020)
+print("Summe Umlaufvermögen 2019 :",umlaufvermögen2019)
+
+#Langfristige Aktiva
+sachanlagen = Aktiva(l4[0],l3[0],l13[0])
+nutzungsrechte = Aktiva(l4[1],l3[1],l13[1])
+geschäfts_u_firmenwerte = Aktiva(l4[2],l3[2],l13[2])
+markenrechte = Aktiva(l4[3],l3[3],l13[3])
+sonstige_imat_verm = Aktiva(l4[4],l3[4],l13[4])
+langf_finanzanlagen = Aktiva(l4[5],l3[5],l13[5])
+sonstige_langf_verm = Aktiva(l4[6],l3[6],l13[6])
+latente_steueransprüche = Aktiva(l4[7],l3[7],l13[7])
+anlagevermögen2020 = sum(l3)
+anlagevermögen2019 = sum(l13)
+#Summe Langfristige Aktiva
+print("Summe Anlagevermögen 2020 :",anlagevermögen2020)
+print("Summe Anlagevermögen 2019 :",anlagevermögen2019)
+print("")
+aktiva2020 = umlaufvermögen2020+anlagevermögen2020
+aktiva2019 = umlaufvermögen2019+anlagevermögen2019
+print("Summe Akitva 2020 :", aktiva2020)
+print("Summe Akitva 2019 :", aktiva2019)
+print("")
+#Kurzfristige Passiva
+kurzf_finanzverb = Passiva(l6[0],l5[0],l15[0])
+verb_aus_l_u_l = Passiva(l6[1],l5[1],l15[1])
+kurzf_leasingver = Passiva(l6[2],l5[2],l15[2])
+ertragsteuer = Passiva(l6[3],l5[3],l15[3])
+sonstige_kurzf_rücks = Passiva(l6[4],l5[4],l15[4])
+kurzf_abge_schulden = Passiva(l6[5],l5[5],l15[5])
+sonstige_kurzf_verb = Passiva(l6[6],l5[6],l15[6])
+kurz_fremdk2020 = sum(l5)
+kurz_fremdk2019 = sum(l15)
+#Summe Kurzfristige Passiva
+print("Summe kurzfristige Fremdkapital 2020",kurz_fremdk2020)
+print("Summe kurzfristige Fremdkapital 2019",kurz_fremdk2019)
+
+#Langfristige Passiva
+langf_finazverb = Passiva(l8[0],l7[0],l17[0])
+langf_leasingverb = Passiva(l8[1],l7[1],l17[1])
+pensionen = Passiva(l8[2],l7[2],l17[2])
+latenten_steuernschulden = Passiva(l8[3],l7[3],l17[3])
+sonstige_langf_rücks = Passiva(l8[4],l7[4],l17[4])
+langf_abge_schulden = Passiva(l8[5],l7[5],l17[5])
+sonstige_langf_verb = Passiva(l8[6],l7[6],l17[6])
+lang_fremdk2020 = sum(l7)
+lang_fremdk2019 = sum(l17)
+#Summe Langfristige Passiva
+print("Summe langfristiges Fremdkapital 2020",lang_fremdk2020)
+print("Summe langfristiges Fremdkapital 2019",lang_fremdk2019)
+
+#Eigenkapital
+grundkapital = Passiva(l10[0],l9[0],l19[0])
+sonstige_rücklagen = Passiva(l10[1],l9[1],l19[1])
+gewinnrücklagen = Passiva(l10[2],l9[2],l19[2])
+nicht_beherrschende_anteile = Passiva(l10[3],l9[3],l19[3])
+eigenkapital2020 = sum(l9)
+eigenkapital2019 = sum(l19)
+#Summe Eigenkapital
+print("Summe Eigenkapital 2020", eigenkapital2020)
+print("Summe Eigenkapital 2019", eigenkapital2019)
+print("")
+passiva2020 = kurz_fremdk2020+lang_fremdk2020+eigenkapital2020
+passiva2019 = kurz_fremdk2019+lang_fremdk2019+eigenkapital2019
+print("Summe Passiva 2020:",passiva2020)
+print("Summe Passiva 2019:",passiva2019)
+
+#Kennzahlen Bilanz 2020
+anlageintensität2020 = anlagevermögen2020/aktiva2020
+anlageintensität2019 = anlagevermögen2019/aktiva2019
+
+umlaufintensität2020 = umlaufvermögen2020/aktiva2020
+umlaufintensität2019 = umlaufvermögen2019/aktiva2019
+
+vermögenselastizität2020 = umlaufvermögen2020/anlagevermögen2020
+vermögenselastizität2019 = umlaufvermögen2019/anlagevermögen2019
+
+vorratsquote2020 = voraete.Wert2020/aktiva2020
+vorratsquote2019 = voraete.Wert2019/aktiva2019
+
+forderungsquote2020 = ford_aus_l_u_l.Wert2020/aktiva2020
+anteil_flüssige_mittel2020 = flüssige_mittel.Wert2020/aktiva2020
+deckungsgrad12020 = eigenkapital2020/anlagevermögen2020
+deckungsgrad22020 = (eigenkapital2020+lang_fremdk2020)/anlagevermögen2020
+working_capital2020 = umlaufvermögen2020/kurzf_finanzverb.Wert2020
+
+eigenkapitalquote2020 = eigenkapital2020/passiva2020
+eigenkapitalquote2019 = eigenkapital2019/passiva2019
+
+verschuldung2020 = (kurz_fremdk2020+lang_fremdk2020)/passiva2020
+verschuldung2019 = (kurz_fremdk2019+lang_fremdk2019)/passiva2019
+
+
+
+#Risikoaggregation
+l21 = []
+l22 = []
+l23 = []
+excel = pd.read_excel('GuV adidas.xlsx')
+def excel_export(filename):
+    global f,l,k
+    book = xlrd.open_workbook(filename,encoding_override ="utf-8")
+    sheet = book.sheet_by_index(0)
+    #Export Positionen GuV 2019
+    f = np.asarray([sheet.cell(i,2).value for i in range(2,11)])
+    #Export Positionen GuV 2018
+    l = np.asarray([sheet.cell(i,4).value for i in range(2,11)])
+    #Export Namen GuV
+    k = np.asarray([sheet.cell(i,0).value for i in range(2,11)])
+excel_export('GuV adidas.xlsx')
+
+v = 0
+for i in range(len(f)):
+    l21.append(int(f[v]))
+    l22.append(int(l[v]))
+    l23.append((k[v]))
+    v +=1
+
+class GuV:
+    def __init__(self,name,wert2019,wert2018,varianz,wahrscheinlichkeit):
+        self.Name = name
+        self.Wert2019 = wert2019
+        self.Wert2018 = wert2018
+        self.Varianz = varianz
+        self.Wahrscheinlichkeit = wahrscheinlichkeit
+
+umsatz = GuV(l23[0],l21[0],l22[0],0.05,0.30)
+personalkosten = GuV(l23[1],l21[1],l22[1],0,0)
+entwicklungskosten = GuV(l23[2],l21[2],l22[2],0,0)
+materialaufwand =GuV(l23[3],l21[3],l22[3],0.15,0.25)
+sonst_betrieb_erträge =GuV(l23[4],l21[4],l22[4],0,0)
+sonst_betrieb_aufw = GuV(l23[5],l21[5],l22[5],0,0)
+zinserträge =GuV(l23[6],l21[6],l22[6],0,0)
+zinsaufwendungen =GuV(l23[7],l21[7],l22[7],0.05,0.60)
+steuern = GuV(l23[8],l21[8],l22[8],0,0)
+
+#2019
+#Summe aller Aufwendungen außer Material u. Zinsaufwendungen
+#Liste 2019
+l80 = [personalkosten.Wert2019 + entwicklungskosten.Wert2019 + sonst_betrieb_aufw.Wert2019 + steuern.Wert2019]
+#Liste 2018
+l90 = [personalkosten.Wert2018 + entwicklungskosten.Wert2018 + sonst_betrieb_aufw.Wert2018 + steuern.Wert2018]
+# Summe aller Erlöse außer Umsatzerlöse
+#Liste 2019
+l81 = [sonst_betrieb_erträge.Wert2019 + zinserträge.Wert2019]
+#Liste 2018
+l91 = [sonst_betrieb_erträge.Wert2018 + zinserträge.Wert2018]
+
+#Wahrscheinlichkeitverteilung und die dazugehörigen Kosten
+s1 = umsatz.Wahrscheinlichkeit
+s2 = materialaufwand.Wahrscheinlichkeit
+s3 = zinsaufwendungen.Wahrscheinlichkeit
+l2 = []
+x1 = round(s1*s2*s3,3)
+y1 = umsatz.Wert2019*(1-umsatz.Varianz) - materialaufwand.Wert2019*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2019*(1+zinsaufwendungen.Varianz)-sum(l80)+sum(l81)
+y11 = umsatz.Wert2018*(1-umsatz.Varianz) - materialaufwand.Wert2018*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2018*(1+zinsaufwendungen.Varianz)-sum(l90)+sum(l91)
+x2= round((1-s1)*s2*s3,3)
+y2 = umsatz.Wert2019*(1) - materialaufwand.Wert2019*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2019*(1+zinsaufwendungen.Varianz)-sum(l80)+sum(l81)
+y12 = umsatz.Wert2018*(1) - materialaufwand.Wert2018*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2018*(1+zinsaufwendungen.Varianz)-sum(l90)+sum(l91)
+x3= round(s1*(1-s2)*s3,3)
+y3 = umsatz.Wert2019*(1-umsatz.Varianz) - materialaufwand.Wert2019*(1) - zinsaufwendungen.Wert2019*(1+zinsaufwendungen.Varianz)-sum(l80)+sum(l81)
+y13 = umsatz.Wert2018*(1-umsatz.Varianz) - materialaufwand.Wert2018*(1) - zinsaufwendungen.Wert2018*(1+zinsaufwendungen.Varianz)-sum(l90)+sum(l91)
+x4= round(s1*s2*(1-s3),3)
+y4 = umsatz.Wert2019*(1-umsatz.Varianz) - materialaufwand.Wert2019*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2019*(1)-sum(l80)+sum(l81)
+y14 = umsatz.Wert2018*(1-umsatz.Varianz) - materialaufwand.Wert2018*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2018*(1)-sum(l90)+sum(l91)
+x5= round((1-s1)*s2*(1-s3),3)
+y5 = umsatz.Wert2019*(1) - materialaufwand.Wert2019*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2019*(1)-sum(l80)+sum(l81)
+y15 = umsatz.Wert2018*(1) - materialaufwand.Wert2018*(1+materialaufwand.Varianz) - zinsaufwendungen.Wert2018*(1)-sum(l90)+sum(l91)
+x6= round((1-s1)*(1-s2)*s3,3)
+y6 = umsatz.Wert2019*(1) - materialaufwand.Wert2019*(1) - zinsaufwendungen.Wert2019*(1+zinsaufwendungen.Varianz)-sum(l80)+sum(l81)
+y16 = umsatz.Wert2018*(1) - materialaufwand.Wert2018*(1) - zinsaufwendungen.Wert2018*(1+zinsaufwendungen.Varianz)-sum(l90)+sum(l91)
+x7= round(s1*(1-s2)*(1-s3),3)
+y7 = umsatz.Wert2019*(1-umsatz.Varianz) - materialaufwand.Wert2019*(1) - zinsaufwendungen.Wert2019*(1)-sum(l80)+sum(l81)
+y17 = umsatz.Wert2018*(1-umsatz.Varianz) - materialaufwand.Wert2018*(1) - zinsaufwendungen.Wert2018*(1)-sum(l90)+sum(l91)
+x8= round((1-s1)*(1-s2)*(1-s3),3)
+y8 = umsatz.Wert2019*(1) - materialaufwand.Wert2019*(1) - zinsaufwendungen.Wert2019*(1)-sum(l80)+sum(l81)
+y18 = umsatz.Wert2018*(1) - materialaufwand.Wert2018*(1) - zinsaufwendungen.Wert2018*(1)-sum(l90)+sum(l91)
+
+#Liste der negativen Jahresergebnisse
+l82 = [] #2019
+l92 = [] #2018
+#Liste Wahrscheinlichkeiten negatives Jahresergebnis
+l83 = [] #2019
+l93 = [] #2018
+#Liste der postiven Jahresergebnisse
+l84 = [] #2019
+l94 = [] #2018
+#Liste Wahrscheinlichkeiten positives Jahresergebnis
+l85 = []
+l95 = []
+
+#2019
+if y1 < 0 :
+    l82.append(y1)
+    l83.append(x1)
+else:
+    l84.append(y1)
+    l85.append(x1)
+if y2 < 0 :
+    l82.append(y2)
+    l83.append(x2)
+else:
+    l84.append(y2)
+    l85.append(x2)
+if y3 < 0 :
+    l82.append(y3)
+    l83.append(x3)
+else:
+    l84.append(y3)
+    l85.append(x3)
+if y4 < 0 :
+    l82.append(y4)
+    l83.append(x4)
+else:
+    l84.append(y4)
+    l85.append(x4)
+if y5 < 0 :
+    l82.append(y5)
+    l83.append(x5)
+else:
+    l84.append(y5)
+    l85.append(x5)
+if y6 < 0 :
+    l82.append(y6)
+    l83.append(x6)
+else:
+    l84.append(y6)
+    l85.append(x6)
+if y7 < 0 :
+    l82.append(y7)
+    l83.append(x7)
+else:
+    l84.append(y7)
+    l85.append(x7)
+if y8 < 0 :
+    l82.append(y8)
+    l83.append(x8)
+else:
+    l84.append(y8)
+    l85.append(x8)
+#2018
+if y11 <0:
+    l92.append(y11)
+    l93.append(x1)
+else:
+    l94.append(y11)
+    l95.append(x1)
+if y12 <0:
+    l92.append(y12)
+    l93.append(x2)
+else:
+    l94.append(y12)
+    l95.append(x2)
+if y13 <0:
+    l92.append(y13)
+    l93.append(x3)
+else:
+    l94.append(y13)
+    l95.append(x3)
+if y14 <0:
+    l92.append(y14)
+    l93.append(x4)
+else:
+    l94.append(y14)
+    l95.append(x4)
+
+if y15 <0:
+    l92.append(y15)
+    l93.append(x5)
+else:
+    l94.append(y15)
+    l95.append(x5)
+
+if y16 <0:
+    l92.append(y16)
+    l93.append(x6)
+else:
+    l94.append(y16)
+    l95.append(x6)
+
+if y17 <0:
+    l92.append(y17)
+    l93.append(x7)
+else:
+    l94.append(y17)
+    l95.append(x7)
+
+if y18 <0:
+    l92.append(y18)
+    l93.append(x8)
+else:
+    l94.append(y18)
+    l95.append(x8)
+
+#Graphen Aktiva
+def anlageintensität():
+    fig, ax = plt.subplots()
+    candidats = ("Anlageintensität 2019","Anlageintensität 2020")
+    voter = [anlageintensität2019,anlageintensität2020]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Anlageintensität')
+    plt.ylabel(' ')
+    plt.xlabel("")
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+def umlaufintensität():
+    fig, ax = plt.subplots()
+    candidats = ("Umlaufintensität 2019","Umlaufintensität 2020")
+    voter = [umlaufintensität2019,umlaufintensität2020]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Umlaufintensität')
+    plt.ylabel(' ')
+    plt.xlabel("")
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+def vermögenselastizität():
+    fig, ax = plt.subplots()
+    candidats = ("Vermögenselastizität 2019","Vermögenselastizität 2020")
+    voter = [vermögenselastizität2019,vermögenselastizität2019]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Vermögenselastizität')
+    plt.ylabel(' ')
+    plt.xlabel("")
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+def vorratsquote():
+    fig, ax = plt.subplots()
+    candidats = ("Voratsquote 2019","Voratsquote 2020")
+    voter = [vorratsquote2019,vorratsquote2020]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Vorratsquote')
+    plt.ylabel(' ')
+    plt.xlabel("")
+    #plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+#Graphen Passiva
+def ek_quote():
+    fig, ax = plt.subplots()
+    candidats = ("EK-Quote 2019","Ek-Quote 2020")
+    voter = [eigenkapitalquote2019,eigenkapitalquote2020]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Eigenkapitalquote')
+    plt.ylabel(' ')
+    plt.xlabel("")
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+def verschuldungsgrad():
+    fig, ax = plt.subplots()
+    candidats = ("Verschuldungsgrad 2019","Verschuldungsgrad 2020")
+    voter = [verschuldung2019,verschuldung2020]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Verschuldungsgrad')
+    plt.ylabel(' ')
+    plt.xlabel("")
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+def p1(): #Graph Risko 2019
+    fig, ax = plt.subplots()
+    candidats = ('positives Jahresergebnis','negatives Jahresergebnis')
+    voter = [(sum(l85)*100),(sum(l83)*100)]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Verteilung Wahrscheinlichkeiten')
+    plt.ylabel('Größe Wahrscheinlichkeit in %')
+    plt.xlabel("Kumulierte Wahrscheinlichkeit")
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+def p2():
+    fig, ax = plt.subplots()
+    candidats = ('positives Jahresergebnis','negatives Jahresergebnis')
+    voter = [(sum(l95)*100),(sum(l93)*100)]
+    y_pos = np.arange(len(candidats))
+    couleur = ['#000000', '#dbb243', '#2e42d3', '#e54fe3', '#f23434']
+    plt.title('Verteilung Wahrscheinlichkeiten')
+    plt.ylabel('Größe Wahrscheinlichkeit in %')
+    plt.xlabel("Kumulierte Wahrscheinlichkeit")
+    plt.bar(y_pos, voter, align='center', alpha=0.6, color=couleur)
+    alpha = 0.8
+    ax.set_xticks(range(len(candidats)))
+    ax.set_xticklabels(candidats, rotation='horizontal')
+    plt.show()
+
+def risk():
+    global fenster1
+    fenster1 = Tk()
+    label11 = Label(fenster1,text="Riskoaggregation")
+    fenster1.geometry("600x850")
+    fenster1.title("Risikoaggregation")
+
+    rahmen = Frame(fenster1,relief="ridge", borderwidth = 5)
+    rahmen.pack(fill="both", expand = 1)
+
+    label1 = Label(fenster1,text="Risikoaggregation-Tool(BWA) Adidas")
+    label1.place(x=220,y=20)
+
+    label2 = Label(fenster1,text="created by Lars")
+    label2.place(x=510,y=830)
+
+    label3 = Label(fenster1,text="Stand 31.03.2020")
+    label3.place(x=20,y=20)
+
+    #2019
+    label14 = Label(fenster1,text="2019",font="20")
+    label14.place(x =100,y=120)
+    f = font.Font(label14, label14.cget("font"))
+    f.configure(underline=True)
+    label14.configure(font=f)
+
+    #2019
+    label15 = Label(fenster1,text="2018",font="20")
+    label15.place(x =400,y=120)
+    f = font.Font(label15, label15.cget("font"))
+    f.configure(underline=True)
+    label15.configure(font=f)
+
+    button8 = MyButton(fenster1,text="Wahrscheinlichkeit Gewinn/Verlust")
+    button8["command"]= button8.aktion8
+    button8.place(x =30,y=150)
+
+    button9 = MyButton(fenster1,text="Wahrscheinlichkeit Gewinn/Verlust")
+    button9["command"]= button9.aktion9
+    button9.place(x=380, y=150)
+
+
+    #p1 = ImageTk.PhotoImage(Image.open('erm-advanced.png'))
+    #p1_Label = Label(fenster1, image=p1).place(x=50,y=420)
+
+    schließen = MyButton(fenster1,text="schließen")
+    schließen["command"]= schließen.close
+    schließen.place(x=270,y=800)
+
+    label11.pack()
+    fenster1.mainloop()
+
+class MyButton(Button):
+    #Aktion Passiva
+    def aktion(self):
+        ek_quote()
+    def aktion3(self):
+        verschuldungsgrad()
+
+    #Aktion Aktiva
+    def aktion1(self):
+        anlageintensität()
+    def aktion2(self):
+        umlaufintensität()
+    def aktion4(self):
+        vermögenselastizität()
+    def aktion5(self):
+        vorratsquote()
+    def aktion6(self):
+        risk()
+    def aktion7(self):
+        bilanz()
+    def aktion8(self):
+        p1()
+    def aktion9(self):
+        p2()
+    #Aktion Schließen Fenster
+    def close(self):
+        fenster.quit()
+
+def bilanz():
+    global fenster
+    fenster = Tk()
+    label = Label(fenster,text="Bilanzanalyse")
+    fenster.geometry("600x850")
+    fenster.title("Bilanzanalyse")
+
+    rahmen = Frame(fenster,relief="ridge", borderwidth = 5)
+    rahmen.pack(fill="both", expand = 1)
+
+    label1 = Label(fenster,text="Bilanzanalyse-Tool(BWA) Adidas")
+    label1.place(x=220,y=20)
+
+    label2 = Label(fenster,text="created by Lars")
+    label2.place(x=510,y=830)
+
+    label3 = Label(fenster,text="Stand 31.03.2020")
+    label3.place(x=20,y=20)
+
+    #Aktiva
+    label4 = Label(fenster,text="Aktiva",font="20")
+    label4.place(x =100,y=120)
+    f = font.Font(label4, label4.cget("font"))
+    f.configure(underline=True)
+    label4.configure(font=f)
+
+    #Passiva
+    label5 = Label(fenster,text="Passiva",font="20")
+    label5.place(x =400,y=120)
+    f = font.Font(label5, label5.cget("font"))
+    f.configure(underline=True)
+    label5.configure(font=f)
+
+    #Passiva
+    button = MyButton(fenster,text="Eigenkapitalquote")
+    button["command"]= button.aktion
+    button.place(x =380,y=150)
+
+    button3 = MyButton(fenster,text="Verschuldungsgrad")
+    button3["command"]= button3.aktion3
+    button3.place(x =380,y=180)
+
+
+    #Aktiva
+    button1 = MyButton(fenster,text="Anlageintensität")
+    button1["command"]= button1.aktion1
+    button1.place(x =80,y=150)
+
+    button2 = MyButton(fenster,text="Umlaufintensität")
+    button2["command"]= button2.aktion2
+    button2.place(x =80,y=180)
+
+    button4 = MyButton(fenster,text="Vermögenintensität")
+    button4["command"]= button4.aktion4
+    button4.place(x =80,y=210)
+
+    button5 = MyButton(fenster,text="Voratsquote")
+    button5["command"]= button5.aktion5
+    button5.place(x =80,y=240)
+
+    button6 = MyButton(fenster,text="zu Risikoaggregation wechseln ?")
+    button6["command"]=button6.aktion6
+    button6.place(x= 350, y=800)
+
+    p = ImageTk.PhotoImage(Image.open('tesla-adidas-model-3-schriftzug-patent-einspruch.jpg'))
+    p_Label = Label(fenster, image=p).place(x=50,y=420)
+
+    schließen = MyButton(fenster,text="schließen")
+    schließen["command"]= schließen.close
+    schließen.place(x=270,y=800)
+
+    label.pack()
+    fenster.mainloop()
+bilanz()
